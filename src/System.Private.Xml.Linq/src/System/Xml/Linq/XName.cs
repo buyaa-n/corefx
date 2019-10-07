@@ -82,7 +82,7 @@ namespace System.Xml.Linq
             }
             else
             {
-                return XNamespace.None.GetName(expandedName);
+                return XNamespace.Get(string.Empty).GetName(expandedName);
             }
         }
 

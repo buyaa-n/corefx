@@ -17,7 +17,6 @@ namespace System.Xml.Linq
         internal const string xmlnsPrefixNamespace = "http://www.w3.org/2000/xmlns/";
 
         private static XHashtable<WeakReference> s_namespaces;
-        private static WeakReference s_refNone;
         private static WeakReference s_refXml;
         private static WeakReference s_refXmlns;
 
@@ -79,7 +78,7 @@ namespace System.Xml.Linq
         {
             get
             {
-                return EnsureNamespace(ref s_refNone, string.Empty);
+                return Get(string.Empty);
             }
         }
 
@@ -231,8 +230,6 @@ namespace System.Xml.Linq
         {
             Debug.Assert(index >= 0 && index <= namespaceName.Length, "Caller should have checked that index was in bounds");
             Debug.Assert(count >= 0 && index + count <= namespaceName.Length, "Caller should have checked that count was in bounds");
-
-            if (count == 0) return None;
 
             // Use CompareExchange to ensure that exactly one XHashtable<WeakReference> is used to store namespaces
             if (s_namespaces == null)

@@ -472,7 +472,7 @@ namespace System.Xml.Linq
         public XNamespace GetDefaultNamespace()
         {
             string namespaceName = GetNamespaceOfPrefixInScope("xmlns", null);
-            return namespaceName != null ? XNamespace.Get(namespaceName) : XNamespace.None;
+            return namespaceName != null ? XNamespace.Get(namespaceName) : XNamespace.Get(string.Empty);
         }
 
         /// <summary>
