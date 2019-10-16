@@ -170,5 +170,44 @@ namespace System.Xml.Linq.Tests
             Assert.NotSame(a.Name.Namespace, b.Name.Namespace);
             Assert.NotSame(a.Name, b.Name);
         }
+
+        [Fact]
+        public void XmlElementsWithEmptyNonEmptyNameSpaceTest()
+        {
+            XNamespace ns = "http://www.test.example";
+            var hasExplicitNs = new XElement(XName.Get("hasNamespace1", "http://www.test.example"), "content");
+            var hasNsInExpandedName = new XElement(ns + "hasNamespace2");
+            var noNsExpandedName = new XElement("emptyNamespace1", "content");
+            var emptyStringNs = new XElement(XName.Get($"emptyNamespace2", string.Empty), "content");
+            XElement root = new XElement("root", hasExplicitNs, hasNsInExpandedName, noNsExpandedName, emptyStringNs);
+
+            Assert.Equal(XNamespace.None, root.GetDefaultNamespace());
+            Assert.True(hasExplicitNs.Name.Namespace == hasNsInExpandedName.Name.Namespace);
+            Assert.Equal(ns, hasNsInExpandedName.Name.Namespace);
+            Assert.True(noNsExpandedName.Name.Namespace == emptyStringNs.Name.Namespace);
+            Assert.Equal(XNamespace.None, emptyStringNs.Name.Namespace);
+        }
+
+        [Fact]
+        public void XmlWithDefaultNamespaceAndEmptyNamespaceTest()
+        {
+            XNamespace ns = "http://www.test.example";
+            string xml = "<root xmlns='http://default.namespace.example/'/>";
+            XElement root = XElement.Parse(xml);
+            var hasExplicitNs = new XElement(XName.Get("hasNamespace1", "http://www.test.example"), "content");
+            var hasNsInExpandedName = new XElement(ns + "hasNamespace2");
+            var noNsExpandedName = new XElement("emptyNamespace1", "content");
+            var emptyStringNs = new XElement(XName.Get($"emptyNamespace2", string.Empty), "content");
+            root.Add(emptyStringNs);
+            root.Add(hasNsInExpandedName);
+            root.Add(hasExplicitNs);
+            root.Add(noNsExpandedName);
+
+            Assert.Equal(root.GetDefaultNamespace(), noNsExpandedName.GetDefaultNamespace());
+            Assert.True(hasExplicitNs.Name.Namespace == hasNsInExpandedName.Name.Namespace);
+            Assert.Equal(ns, hasNsInExpandedName.Name.Namespace);
+            Assert.True(noNsExpandedName.Name.Namespace == emptyStringNs.Name.Namespace);
+            Assert.Equal(XNamespace.None, emptyStringNs.Name.Namespace);
+        }
     }
 }

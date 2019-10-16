@@ -23,7 +23,7 @@ namespace System.Xml.Linq
 
         private readonly string _namespaceName;
         private readonly int _hashCode;
-        private readonly XHashtable<XName> _names;
+        private WeakReference _names;
 
         private const int NamesCapacity = 8;           // Starting capacity of XName table, which must be power of 2
         private const int NamespacesCapacity = 32;     // Starting capacity of XNamespace table, which must be power of 2
@@ -35,7 +35,6 @@ namespace System.Xml.Linq
         {
             _namespaceName = namespaceName;
             _hashCode = namespaceName.GetHashCode();
-            _names = new XHashtable<XName>(ExtractLocalName, NamesCapacity);
         }
 
         /// <summary>
@@ -216,11 +215,30 @@ namespace System.Xml.Linq
 
             // Attempt to get the local name from the hash table
             XName name;
-            if (_names.TryGetValue(localName, index, count, out name))
+            XHashtable<XName> namesTable = EnsureNameHashtable(ref _names);
+            if (namesTable.TryGetValue(localName, index, count, out name))
                 return name;
 
             // No local name has yet been added, so add it now
-            return _names.Add(new XName(this, localName.Substring(index, count)));
+            return namesTable.Add(new XName(this, localName.Substring(index, count)));
+        }
+
+        private static XHashtable<XName> EnsureNameHashtable(ref WeakReference refNames)
+        {
+            WeakReference refOld;
+
+            while (true)
+            {
+                refOld = refNames;
+
+                if (refOld != null)
+                {
+                    XHashtable<XName> ns = (XHashtable<XName>)refOld.Target;
+                    if (ns != null) return ns;
+                }
+
+                Interlocked.CompareExchange(ref refNames, new WeakReference(new XHashtable<XName>(ExtractLocalName, NamesCapacity)), refOld);
+            }
         }
 
         /// <summary>
