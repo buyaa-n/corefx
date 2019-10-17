@@ -23,7 +23,7 @@ namespace System.Xml.Linq
 
         private readonly string _namespaceName;
         private readonly int _hashCode;
-        private WeakReference _names;
+        private WeakReference<XHashtable<XName>> _names;
 
         private const int NamesCapacity = 8;           // Starting capacity of XName table, which must be power of 2
         private const int NamespacesCapacity = 32;     // Starting capacity of XNamespace table, which must be power of 2
@@ -223,21 +223,19 @@ namespace System.Xml.Linq
             return namesTable.Add(new XName(this, localName.Substring(index, count)));
         }
 
-        private static XHashtable<XName> EnsureNameHashtable(ref WeakReference refNames)
+        private static XHashtable<XName> EnsureNameHashtable(ref WeakReference<XHashtable<XName>> refNames)
         {
-            WeakReference refOld;
-
+            WeakReference<XHashtable<XName>> refOld;
             while (true)
             {
                 refOld = refNames;
-
                 if (refOld != null)
                 {
-                    XHashtable<XName> ns = (XHashtable<XName>)refOld.Target;
-                    if (ns != null) return ns;
+                    if (refOld.TryGetTarget(out XHashtable<XName> table))
+                        return table;
                 }
 
-                Interlocked.CompareExchange(ref refNames, new WeakReference(new XHashtable<XName>(ExtractLocalName, NamesCapacity)), refOld);
+                Interlocked.CompareExchange(ref refNames, new WeakReference<XHashtable<XName>>(new XHashtable<XName>(ExtractLocalName, NamesCapacity)), refOld);
             }
         }
 

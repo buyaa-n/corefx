@@ -175,39 +175,17 @@ namespace System.Xml.Linq.Tests
         public void XmlElementsWithEmptyNonEmptyNameSpaceTest()
         {
             XNamespace ns = "http://www.test.example";
-            var hasExplicitNs = new XElement(XName.Get("hasNamespace1", "http://www.test.example"), "content");
-            var hasNsInExpandedName = new XElement(ns + "hasNamespace2");
-            var noNsExpandedName = new XElement("emptyNamespace1", "content");
-            var emptyStringNs = new XElement(XName.Get($"emptyNamespace2", string.Empty), "content");
-            XElement root = new XElement("root", hasExplicitNs, hasNsInExpandedName, noNsExpandedName, emptyStringNs);
+            XName hasExplicitNs = XName.Get("hasNamespace1", "http://www.test.example");
+            XName hasNsInExpandedName = ns + "hasNamespace2";
+            XName noNsExpandedName = "emptyNamespace1";
+            XName emptyStringNs = XName.Get($"emptyNamespace2", string.Empty);
 
-            Assert.Equal(XNamespace.None, root.GetDefaultNamespace());
-            Assert.True(hasExplicitNs.Name.Namespace == hasNsInExpandedName.Name.Namespace);
-            Assert.Equal(ns, hasNsInExpandedName.Name.Namespace);
-            Assert.True(noNsExpandedName.Name.Namespace == emptyStringNs.Name.Namespace);
-            Assert.Equal(XNamespace.None, emptyStringNs.Name.Namespace);
-        }
-
-        [Fact]
-        public void XmlWithDefaultNamespaceAndEmptyNamespaceTest()
-        {
-            XNamespace ns = "http://www.test.example";
-            string xml = "<root xmlns='http://default.namespace.example/'/>";
-            XElement root = XElement.Parse(xml);
-            var hasExplicitNs = new XElement(XName.Get("hasNamespace1", "http://www.test.example"), "content");
-            var hasNsInExpandedName = new XElement(ns + "hasNamespace2");
-            var noNsExpandedName = new XElement("emptyNamespace1", "content");
-            var emptyStringNs = new XElement(XName.Get($"emptyNamespace2", string.Empty), "content");
-            root.Add(emptyStringNs);
-            root.Add(hasNsInExpandedName);
-            root.Add(hasExplicitNs);
-            root.Add(noNsExpandedName);
-
-            Assert.Equal(root.GetDefaultNamespace(), noNsExpandedName.GetDefaultNamespace());
-            Assert.True(hasExplicitNs.Name.Namespace == hasNsInExpandedName.Name.Namespace);
-            Assert.Equal(ns, hasNsInExpandedName.Name.Namespace);
-            Assert.True(noNsExpandedName.Name.Namespace == emptyStringNs.Name.Namespace);
-            Assert.Equal(XNamespace.None, emptyStringNs.Name.Namespace);
+            Assert.Equal(hasExplicitNs, ns.GetName(hasExplicitNs.LocalName));
+            Assert.Equal(hasNsInExpandedName, ns.GetName(hasNsInExpandedName.LocalName));
+            Assert.Equal(ns, hasNsInExpandedName.Namespace);
+            Assert.Equal(emptyStringNs, XNamespace.None.GetName(emptyStringNs.LocalName));
+            Assert.Equal(noNsExpandedName, XNamespace.None.GetName(noNsExpandedName.LocalName));
+            Assert.Equal(XNamespace.None, emptyStringNs.Namespace);
         }
     }
 }
