@@ -18,7 +18,7 @@ namespace System.Text.Json.Serialization.Converters
         private static readonly JsonEncodedText _keyName = JsonEncodedText.Encode(KeyName, encoder: null);
         private static readonly JsonEncodedText _valueName = JsonEncodedText.Encode(ValueName, encoder: null);
 
-        public override KeyValuePair<TKey, TValue> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override KeyValuePair<TKey, TValue> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions? options)
         {
             if (reader.TokenType != JsonTokenType.StartObject)
             {
@@ -92,7 +92,7 @@ namespace System.Text.Json.Serialization.Converters
             return new KeyValuePair<TKey, TValue>(k, v);
         }
 
-        private T ReadProperty<T>(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        private T ReadProperty<T>(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions? options)
         {
             T k;
 
@@ -111,7 +111,7 @@ namespace System.Text.Json.Serialization.Converters
             return k;
         }
 
-        private void WriteProperty<T>(Utf8JsonWriter writer, T value, JsonEncodedText name, JsonSerializerOptions options)
+        private void WriteProperty<T>(Utf8JsonWriter writer, T value, JsonEncodedText name, JsonSerializerOptions? options)
         {
             Type typeToConvert = typeof(T);
 
@@ -129,7 +129,7 @@ namespace System.Text.Json.Serialization.Converters
             }
         }
 
-        public override void Write(Utf8JsonWriter writer, KeyValuePair<TKey, TValue> value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, KeyValuePair<TKey, TValue> value, JsonSerializerOptions? options)
         {
             writer.WriteStartObject();
             WriteProperty(writer, value.Key, _keyName, options);

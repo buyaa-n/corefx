@@ -59,8 +59,7 @@ namespace System.Text.Json.Serialization.Converters
         {
             Type immutableCollectionType = state.Current.JsonPropertyInfo!.RuntimePropertyType;
 
-            JsonClassInfo? elementClassInfo = state.Current.JsonPropertyInfo.ElementClassInfo;
-            Debug.Assert(elementClassInfo != null);
+            JsonClassInfo elementClassInfo = state.Current.JsonPropertyInfo.ElementClassInfo!;
             Type elementType = elementClassInfo.Type;
 
             string delegateKey = DefaultImmutableEnumerableConverter.GetDelegateKey(immutableCollectionType, elementType, out _, out _);

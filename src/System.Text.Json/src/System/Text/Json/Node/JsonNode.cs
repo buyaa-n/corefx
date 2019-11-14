@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace System.Text.Json
@@ -35,7 +36,7 @@ namespace System.Text.Json
         /// <exception cref="ArgumentException">
         ///   Provided <see cref="JsonElement"/> was not built from <see cref="JsonNode"/>.
         /// </exception>
-        public static JsonNode GetNode(JsonElement jsonElement) => !jsonElement.IsImmutable ? (JsonNode)jsonElement._parent : throw new ArgumentException(SR.NotNodeJsonElementParent);
+        public static JsonNode GetNode(JsonElement jsonElement) => !jsonElement.IsImmutable ? (JsonNode)jsonElement._parent! : throw new ArgumentException(SR.NotNodeJsonElementParent);
 
         /// <summary>
         ///    Gets the <see cref="JsonNode"/> represented by the <paramref name="jsonElement"/>.
@@ -52,6 +53,7 @@ namespace System.Text.Json
         {
             if (!jsonElement.IsImmutable)
             {
+                Debug.Assert(jsonElement._parent != null);
                 jsonNode = (JsonNode)jsonElement._parent;
                 return true;
             }
@@ -73,7 +75,7 @@ namespace System.Text.Json
         /// <remarks>
         ///   Null value is accepted and will be interpreted as <see cref="JsonNull"/>.
         /// </remarks>
-        public static implicit operator JsonNode(string value)
+        public static implicit operator JsonNode(string? value)
         {
             if (value == null)
             {

@@ -41,7 +41,8 @@ namespace System.Text.Json
         /// <exception cref="ArgumentNullException">
         ///   Provided property name is null.
         /// </exception>
-        public JsonNode? this[string propertyName]
+        [AllowNull]
+        public JsonNode this[string propertyName]
         {
             get => propertyName != null ? GetPropertyValue(propertyName) : throw new ArgumentNullException(nameof(propertyName));
             set

@@ -113,7 +113,6 @@ namespace System.Text.Json
                 throw new ArgumentNullException(nameof(writer));
             }
 
-            Debug.Assert(Name != null);
             writer.WritePropertyName(Name);
             Value.WriteTo(writer);
         }
