@@ -5,6 +5,7 @@
 using System.Globalization;
 using System.Buffers;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace System.Text.Json
 {
@@ -222,7 +223,7 @@ namespace System.Text.Json
         /// <returns>
         ///   <see langword="true"/> if text was converted successfully; othwerwise returns <see langword="false"/>.
         /// </returns>
-        internal bool TryGetBytesFromBase64(out byte[] value)
+        internal bool TryGetBytesFromBase64([NotNullWhen(true)] out byte[]? value)
         {
             Debug.Assert(_value != null);
 
@@ -238,7 +239,7 @@ namespace System.Text.Json
             // be /4 * 3 - padding. To be on the safe side, keep padding and slice later
             int bufferSize = _value.Length / 4 * 3;
 
-            byte[] arrayToReturnToPool = null;
+            byte[]? arrayToReturnToPool = null;
             Span<byte> buffer = bufferSize <= JsonConstants.StackallocThreshold
                 ? stackalloc byte[JsonConstants.StackallocThreshold]
                 : arrayToReturnToPool = ArrayPool<byte>.Shared.Rent(bufferSize);
