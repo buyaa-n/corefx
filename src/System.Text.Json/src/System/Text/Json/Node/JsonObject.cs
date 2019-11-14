@@ -53,7 +53,7 @@ namespace System.Text.Json
 
                 if (_dictionary.ContainsKey(propertyName))
                 {
-                    _dictionary[propertyName].Value = value ?? new JsonNull();
+                    _dictionary[propertyName].Value = value ?? JsonNull.Instance;
                 }
                 else
                 {
@@ -97,15 +97,17 @@ namespace System.Text.Json
                 throw new ArgumentException(SR.Format(SR.JsonObjectDuplicateKey, propertyName));
             }
 
+            JsonNode valueOrJsonNull = propertyValue ?? JsonNull.Instance;
+
             // Add property to linked list:
             if (_last == null)
             {
-                _last = new JsonObjectProperty(propertyName, propertyValue ?? new JsonNull(), null, null);
+                _last = new JsonObjectProperty(propertyName, valueOrJsonNull, null, null);
                 _first = _last;
             }
             else
             {
-                var newJsonObjectProperty = new JsonObjectProperty(propertyName, propertyValue ?? new JsonNull(), _last, null);
+                var newJsonObjectProperty = new JsonObjectProperty(propertyName, valueOrJsonNull, _last, null);
                 _last.Next = newJsonObjectProperty;
                 _last = newJsonObjectProperty;
             }
@@ -124,7 +126,7 @@ namespace System.Text.Json
         ///   Provided collection contains duplicates.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///   Some of property names are null.
+        ///   Some of the property names are null.
         /// </exception>
         public void AddRange(IEnumerable<KeyValuePair<string, JsonNode?>> jsonProperties)
         {
@@ -137,7 +139,7 @@ namespace System.Text.Json
         /// <summary>
         ///   Removes the property with the specified name.
         /// </summary>
-        /// <param name="propertyName">>Name of a property to remove.</param>
+        /// <param name="propertyName">Name of the property to remove.</param>
         /// <returns>
         ///   <see langword="true"/> if the property is successfully found in a JSON object and removed,
         ///   <see langword="false"/> otherwise.
@@ -177,8 +179,8 @@ namespace System.Text.Json
         /// <summary>
         ///   Removes the property with the specified name.
         /// </summary>
-        /// <param name="propertyName">>Name of a property to remove.</param>
-        /// <param name="stringComparison">The culture and case to be used when comparing string value.</param>
+        /// <param name="propertyName">Name of the property to remove.</param>
+        /// <param name="stringComparison">The culture, case, and sort rules to be used when comparing string value.</param>
         /// <returns>
         ///   <see langword="true"/> if the property is successfully found in a JSON object and removed,
         ///   <see langword="false"/> otherwise.
@@ -186,8 +188,16 @@ namespace System.Text.Json
         /// <exception cref="ArgumentNullException">
         ///   Provided property name is null.
         /// </exception>
+        /// <remarks>
+        ///   If <paramref name="stringComparison"/> is set to <see cref="StringComparison.Ordinal"/>, calling this method is equivalent to calling <see cref="Remove(string)"/>.
+        /// </remarks>
         public bool Remove(string propertyName, StringComparison stringComparison)
         {
+            if (stringComparison == StringComparison.Ordinal)
+            {
+                return Remove(propertyName);
+            }
+
             if (propertyName == null)
             {
                 throw new ArgumentNullException(nameof(propertyName));
@@ -247,19 +257,27 @@ namespace System.Text.Json
         public bool ContainsProperty(string propertyName) => propertyName != null ? _dictionary.ContainsKey(propertyName) : throw new ArgumentNullException(nameof(propertyName));
 
         /// <summary>
-        ///   Determines whether a property is in a JSON object.
+        ///   Determines whether a property is in this JSON object.
         /// </summary>
         /// <param name="propertyName">Name of the property to check.</param>
-        /// <param name="stringComparison">The culture and case to be used when comparing string value.</param>
+        /// <param name="stringComparison">The culture, case, and sort rules to be used when comparing string value.</param>
         /// <returns>
-        ///   <see langword="true"/> if the property is successfully found in a JSON object,
+        ///   <see langword="true"/> if the property is successfully found in the JSON object,
         ///   <see langword="false"/> otherwise.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         ///   Provided property name is null.
         /// </exception>
+        /// <remarks>
+        ///   If <paramref name="stringComparison"/> is set to <see cref="StringComparison.Ordinal"/>, calling this method is equivalent to calling <see cref="ContainsProperty(string)"/>.
+        /// </remarks>
         public bool ContainsProperty(string propertyName, StringComparison stringComparison)
         {
+            if (stringComparison == StringComparison.Ordinal)
+            {
+                return ContainsProperty(propertyName);
+            }
+
             foreach (KeyValuePair<string, JsonNode> property in this)
             {
                 if (string.Equals(property.Key, propertyName, stringComparison))
@@ -275,9 +293,9 @@ namespace System.Text.Json
         ///   Returns the value of a property with the specified name.
         /// </summary>
         /// <param name="propertyName">Name of the property to return.</param>
-        /// <returns>Value of the property with the specified name.</returns>
+        /// <returns>The JSON value of the property with the specified name.</returns>
         /// <exception cref="KeyNotFoundException">
-        ///   Property with specified name is not found in JSON object.
+        ///   A property with the specified name is not found in this JSON object.
         /// </exception>
         public JsonNode GetPropertyValue(string propertyName)
         {
@@ -293,11 +311,14 @@ namespace System.Text.Json
         ///   Returns the value of a property with the specified name.
         /// </summary>
         /// <param name="propertyName">Name of the property to return.</param>
-        /// <param name="stringComparison">The culture and case to be used when comparing string value.</param>
-        /// <returns>Value of the property with the specified name.</returns>
+        /// <param name="stringComparison">The culture, case, and sort rules to be used when comparing string value.</param>
+        /// <returns>The JSON value of the property with the specified name.</returns>
         /// <exception cref="KeyNotFoundException">
-        ///   Property with specified name is not found in JSON object.
+        ///   A property with the specified name is not found in this JSON object.
         /// </exception>
+        /// <remarks>
+        ///   If <paramref name="stringComparison"/> is set to <see cref="StringComparison.Ordinal"/>, calling this method is equivalent to calling <see cref="GetPropertyValue(string)"/>.
+        /// </remarks>
         public JsonNode GetPropertyValue(string propertyName, StringComparison stringComparison)
         {
             if (!TryGetPropertyValue(propertyName, stringComparison, out JsonNode? jsonNode))
@@ -312,13 +333,13 @@ namespace System.Text.Json
         ///   Returns the value of a property with the specified name.
         /// </summary>
         /// <param name="propertyName">Name of the property to return.</param>
-        /// <param name="jsonNode">Value of the property with specified name.</param>
+        /// <param name="jsonNode">The JSON value of the property with the specified name.</param>
         /// <returns>
-        ///  <see langword="true"/> if property with specified name was found;
+        ///  <see langword="true"/> if a property with the specified name was found;
         ///  otherwise, <see langword="false"/>
         /// </returns>
         /// <remarks>
-        ///   When returns <see langword="false"/>, the value of <paramref name="jsonNode"/> is meaningless.
+        ///   When this method returns <see langword="false"/>, the value of <paramref name="jsonNode"/> is meaningless.
         /// </remarks>
         public bool TryGetPropertyValue(string propertyName, [NotNullWhen(true)] out JsonNode? jsonNode)
         {
@@ -336,17 +357,25 @@ namespace System.Text.Json
         ///   Returns the value of a property with the specified name.
         /// </summary>
         /// <param name="propertyName">Name of the property to return.</param>
-        /// <param name="stringComparison">The culture and case to be used when comparing string value.</param>
-        /// <param name="jsonNode">Value of the property with specified name.</param>
+        /// <param name="stringComparison">The culture, case, and sort rules to be used when comparing string value.</param>
+        /// <param name="jsonNode">The JSON value of the property with the specified name.</param>
         /// <returns>
         ///  <see langword="true"/> if property with specified name was found;
         ///  otherwise, <see langword="false"/>
         /// </returns>
         /// <remarks>
-        ///   When returns <see langword="false"/>, the value of <paramref name="jsonNode"/> is meaningless.
+        ///   When this method returns <see langword="false"/>, the value of <paramref name="jsonNode"/> is meaningless.
+        /// </remarks>
+        /// <remarks>
+        ///   If <paramref name="stringComparison"/> is set to <see cref="StringComparison.Ordinal"/>, calling this method is equivalent to calling <see cref="TryGetPropertyValue(string, out JsonNode)"/>.
         /// </remarks>
         public bool TryGetPropertyValue(string propertyName, StringComparison stringComparison, [NotNullWhen(true)] out JsonNode? jsonNode)
         {
+            if (stringComparison == StringComparison.Ordinal)
+            {
+                return TryGetPropertyValue(propertyName, out jsonNode);
+            }
+
             foreach (KeyValuePair<string, JsonNode> property in this)
             {
                 if (string.Equals(property.Key, propertyName, stringComparison))
@@ -364,12 +393,12 @@ namespace System.Text.Json
         ///   Returns the JSON object value of a property with the specified name.
         /// </summary>
         /// <param name="propertyName">Name of the property to return.</param>
-        /// <returns>JSON objectvalue of a property with the specified name.</returns>
+        /// <returns>The JSON object value of the property with the specified name.</returns>
         /// <exception cref="KeyNotFoundException">
-        ///   Property with specified name is not found in JSON object.
+        ///   A property with the specified name is not found in this JSON object.
         /// </exception>
         /// <exception cref="ArgumentException">
-        ///   Property with specified name is not a JSON object.
+        ///   The property with the specified name is not a JSON object.
         /// </exception>
         public JsonObject GetJsonObjectPropertyValue(string propertyName)
         {
@@ -385,14 +414,17 @@ namespace System.Text.Json
         ///   Returns the JSON object value of a property with the specified name.
         /// </summary>
         /// <param name="propertyName">Name of the property to return.</param>
-        /// <param name="stringComparison">The culture and case to be used when comparing string value.</param>
-        /// <returns>JSON objectvalue of a property with the specified name.</returns>
+        /// <param name="stringComparison">The culture, case, and sort rules to be used when comparing string value.</param>
+        /// <returns>The JSON object value of the property with the specified name.</returns>
         /// <exception cref="KeyNotFoundException">
-        ///   Property with specified name is not found in JSON object.
+        ///   A property with the specified name is not found in this JSON object.
         /// </exception>
         /// <exception cref="ArgumentException">
-        ///   Property with specified name is not a JSON object.
+        ///   The property with the specified name is not a JSON object.
         /// </exception>
+        /// <remarks>
+        ///   If <paramref name="stringComparison"/> is set to <see cref="StringComparison.Ordinal"/>, calling this method is equivalent to calling <see cref="GetJsonObjectPropertyValue(string)"/>.
+        /// </remarks>
         public JsonObject GetJsonObjectPropertyValue(string propertyName, StringComparison stringComparison)
         {
             if (GetPropertyValue(propertyName, stringComparison) is JsonObject jsonObject)
@@ -407,7 +439,7 @@ namespace System.Text.Json
         ///   Returns the JSON object value of a property with the specified name.
         /// </summary>
         /// <param name="propertyName">Name of the property to return.</param>
-        /// <param name="jsonObject">JSON object value of the property with specified name.</param>
+        /// <param name="jsonObject">The JSON object value of the property with the specified name.</param>
         /// <returns>
         ///  <see langword="true"/> if JSON object property with specified name was found;
         ///  otherwise, <see langword="false"/>
@@ -428,12 +460,15 @@ namespace System.Text.Json
         ///   Returns the JSON object value of a property with the specified name.
         /// </summary>
         /// <param name="propertyName">Name of the property to return.</param>
-        /// <param name="stringComparison">The culture and case to be used when comparing string value.</param>
-        /// <param name="jsonObject">JSON object value of the property with specified name.</param>
+        /// <param name="stringComparison">The culture, case, and sort rules to be used when comparing string value.</param>
+        /// <param name="jsonObject">The JSON object value of the property with the specified name.</param>
         /// <returns>
         ///  <see langword="true"/> if JSON object property with specified name was found;
         ///  otherwise, <see langword="false"/>
         /// </returns>
+        /// <remarks>
+        ///   If <paramref name="stringComparison"/> is set to <see cref="StringComparison.Ordinal"/>, calling this method is equivalent to calling <see cref="TryGetJsonObjectPropertyValue(string, out JsonObject)"/>.
+        /// </remarks>
         public bool TryGetJsonObjectPropertyValue(string propertyName, StringComparison stringComparison, [NotNullWhen(true)] out JsonObject? jsonObject)
         {
             if (TryGetPropertyValue(propertyName, stringComparison, out JsonNode? jsonNode))
@@ -450,12 +485,12 @@ namespace System.Text.Json
         ///   Returns the JSON array value of a property with the specified name.
         /// </summary>
         /// <param name="propertyName">Name of the property to return.</param>
-        /// <returns>JSON objectvalue of a property with the specified name.</returns>
+        /// <returns>The JSON array value of the property with the specified name.</returns>
         /// <exception cref="KeyNotFoundException">
-        ///   Property with specified name is not found in JSON array.
+        ///   A property with the specified name is not found in this JSON object.
         /// </exception>
         /// <exception cref="ArgumentException">
-        ///   Property with specified name is not a JSON array.
+        ///   The property with the specified name is not a JSON array.
         /// </exception>
         public JsonArray GetJsonArrayPropertyValue(string propertyName)
         {
@@ -471,14 +506,17 @@ namespace System.Text.Json
         ///   Returns the JSON array value of a property with the specified name.
         /// </summary>
         /// <param name="propertyName">Name of the property to return.</param>
-        /// <param name="stringComparison">The culture and case to be used when comparing string value.</param>
-        /// <returns>JSON objectvalue of a property with the specified name.</returns>
+        /// <param name="stringComparison">The culture, case, and sort rules to be used when comparing string value.</param>
+        /// <returns>The JSON array value of the property with the specified name.</returns>
         /// <exception cref="KeyNotFoundException">
-        ///   Property with specified name is not found in JSON array.
+        ///   A property with the specified name is not found in this JSON object.
         /// </exception>
         /// <exception cref="ArgumentException">
-        ///   Property with specified name is not a JSON array.
+        ///   The property with the specified name is not a JSON array.
         /// </exception>
+        /// <remarks>
+        ///   If <paramref name="stringComparison"/> is set to <see cref="StringComparison.Ordinal"/>, calling this method is equivalent to calling <see cref="GetJsonArrayPropertyValue(string)"/>.
+        /// </remarks>
         public JsonArray GetJsonArrayPropertyValue(string propertyName, StringComparison stringComparison)
         {
             if (GetPropertyValue(propertyName, stringComparison) is JsonArray jsonArray)
@@ -493,7 +531,7 @@ namespace System.Text.Json
         ///   Returns the JSON array value of a property with the specified name.
         /// </summary>
         /// <param name="propertyName">Name of the property to return.</param>
-        /// <param name="jsonArray">JSON array value of the property with specified name.</param>
+        /// <param name="jsonArray">The JSON array value of the property with the specified name.</param>
         /// <returns>
         ///  <see langword="true"/> if JSON array property with specified name was found;
         ///  otherwise, <see langword="false"/>
@@ -514,12 +552,15 @@ namespace System.Text.Json
         ///   Returns the JSON array value of a property with the specified name.
         /// </summary>
         /// <param name="propertyName">Name of the property to return.</param>
-        /// <param name="stringComparison">The culture and case to be used when comparing string value.</param>
-        /// <param name="jsonArray">JSON array value of the property with specified name.</param>
+        /// <param name="stringComparison">The culture, case, and sort rules to be used when comparing string value.</param>
+        /// <param name="jsonArray">The JSON array value of the property with the specified name.</param>
         /// <returns>
         ///  <see langword="true"/> if JSON array property with specified name was found;
         ///  otherwise, <see langword="false"/>
         /// </returns>
+        /// <remarks>
+        ///   If <paramref name="stringComparison"/> is set to <see cref="StringComparison.Ordinal"/>, calling this method is equivalent to calling <see cref="TryGetJsonArrayPropertyValue(string, out JsonArray)"/>.
+        /// </remarks>
         public bool TryGetJsonArrayPropertyValue(string propertyName, StringComparison stringComparison, [NotNullWhen(true)] out JsonArray? jsonArray)
         {
             if (TryGetPropertyValue(propertyName, stringComparison, out JsonNode? jsonNode))
