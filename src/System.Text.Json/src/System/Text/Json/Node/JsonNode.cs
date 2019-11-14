@@ -2,6 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace System.Text.Json
 {
     /// <summary>
@@ -45,7 +47,7 @@ namespace System.Text.Json
         ///  <see langword="true"/> if the operation succeded;
         ///  otherwise, <see langword="false"/>
         /// </returns>
-        public static bool TryGetNode(JsonElement jsonElement, out JsonNode jsonNode)
+        public static bool TryGetNode(JsonElement jsonElement, [NotNullWhen(true)] out JsonNode? jsonNode)
         {
             if (!jsonElement.IsImmutable)
             {

@@ -223,7 +223,7 @@ namespace System.Text.Json
         /// </summary>
         /// <param name="value">The value to add.</param>
         /// <remarks>Null value is allowed and will be converted to the <see cref="JsonNull"/> instance.</remarks>
-        public void Add(JsonNode value)
+        public void Add(JsonNode? value)
         {
             _list.Add(value ?? new JsonNull());
             _version++;

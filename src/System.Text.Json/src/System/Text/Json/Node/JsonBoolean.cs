@@ -38,7 +38,7 @@ namespace System.Text.Json
         ///   <see langword="true"/> if the boolean value of this instance matches <paramref name="obj"/>,
         ///   <see langword="false"/> otherwise.
         /// </returns>
-        public override bool Equals(object obj) => obj is JsonBoolean jsonBoolean && Equals(jsonBoolean);
+        public override bool Equals(object? obj) => obj is JsonBoolean jsonBoolean && Equals(jsonBoolean);
 
         /// <summary>
         ///   Calculates a hash code of this instance.

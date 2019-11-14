@@ -19,7 +19,7 @@ namespace System.Text.Json
             private readonly JsonElement _target;
             private int _curIdx;
             private readonly int _endIdxOrVersion;
-            private JsonObjectProperty _current;
+            private JsonObjectProperty? _current;
 
             internal ObjectEnumerator(JsonElement target)
             {

@@ -11,7 +11,7 @@ namespace System.Text.Json
     /// </summary>
     public sealed class JsonString : JsonNode, IEquatable<JsonString>
     {
-        private string _value;
+        private string _value = null!;
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="JsonString"/> class representing the empty value.
@@ -147,7 +147,7 @@ namespace System.Text.Json
         ///   <see langword="true"/> if the text value of this instance matches <paramref name="obj"/>,
         ///   <see langword="false"/> otherwise.
         /// </returns>
-        public override bool Equals(object obj) => obj is JsonString jsonString && Equals(jsonString);
+        public override bool Equals(object? obj) => obj is JsonString jsonString && Equals(jsonString);
 
         /// <summary>
         ///   Calculates a hash code of this instance.
@@ -163,7 +163,7 @@ namespace System.Text.Json
         ///   <see langword="true"/> if the text value of this instance matches <paramref name="other"/>,
         ///   <see langword="false"/> otherwise.
         /// </returns>
-        public bool Equals(JsonString other) => !(other is null) && Value == other.Value;
+        public bool Equals(JsonString? other) => !(other is null) && Value == other.Value;
 
         /// <summary>
         ///   Compares values of two JSON strings.
@@ -174,7 +174,7 @@ namespace System.Text.Json
         ///   <see langword="true"/> if values of instances match,
         ///   <see langword="false"/> otherwise.
         /// </returns>
-        public static bool operator ==(JsonString left, JsonString right)
+        public static bool operator ==(JsonString? left, JsonString? right)
         {
             // Test "right" first to allow branch elimination when inlined for null checks (== null)
             // so it can become a simple test
@@ -196,7 +196,7 @@ namespace System.Text.Json
         ///   <see langword="true"/> if values of instances do not match,
         ///   <see langword="false"/> otherwise.
         /// </returns>
-        public static bool operator !=(JsonString left, JsonString right) => !(left == right);
+        public static bool operator !=(JsonString? left, JsonString? right) => !(left == right);
 
         /// <summary>
         ///   Creates a new JSON string that is a copy of the current instance.

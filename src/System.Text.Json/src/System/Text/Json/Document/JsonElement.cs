@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace System.Text.Json
 {
@@ -328,7 +329,7 @@ namespace System.Text.Json
 
             if (jsonNode is JsonObject jsonObject)
             {
-                if (jsonObject.TryGetPropertyValue(propertyName.ToString(), out JsonNode nodeValue))
+                if (jsonObject.TryGetPropertyValue(propertyName.ToString(), out JsonNode? nodeValue))
                 {
                     value = nodeValue.AsJsonElement();
                     return true;
@@ -383,7 +384,7 @@ namespace System.Text.Json
 
             if (jsonNode is JsonObject jsonObject)
             {
-                if (jsonObject.TryGetPropertyValue(JsonHelpers.Utf8GetString(utf8PropertyName), out JsonNode nodeValue))
+                if (jsonObject.TryGetPropertyValue(JsonHelpers.Utf8GetString(utf8PropertyName), out JsonNode? nodeValue))
                 {
                     value = nodeValue.AsJsonElement();
                     return true;
@@ -454,7 +455,7 @@ namespace System.Text.Json
 
             if (_parent is JsonDocument document)
             {
-                return document.GetString(_idx, JsonTokenType.String);
+                return document.GetString(_idx, JsonTokenType.String)!;
             }
 
             var jsonNode = (JsonNode)_parent;
@@ -484,7 +485,7 @@ namespace System.Text.Json
         /// <exception cref="ObjectDisposedException">
         ///   The parent <see cref="JsonDocument"/> has been disposed.
         /// </exception>
-        public bool TryGetBytesFromBase64(out byte[] value)
+        public bool TryGetBytesFromBase64([NotNullWhen(true)] out byte[]? value)
         {
             CheckValidInstance();
 
@@ -522,7 +523,7 @@ namespace System.Text.Json
         /// <seealso cref="ToString"/>
         public byte[] GetBytesFromBase64()
         {
-            if (TryGetBytesFromBase64(out byte[] value))
+            if (TryGetBytesFromBase64(out byte[]? value))
             {
                 return value;
             }
@@ -1715,7 +1716,7 @@ namespace System.Text.Json
         /// <exception cref="ObjectDisposedException">
         ///   The parent <see cref="JsonDocument"/> has been disposed.
         /// </exception>
-        public override string ToString()
+        public override string? ToString()
         {
             if (_parent is JsonNode jsonNode)
             {
