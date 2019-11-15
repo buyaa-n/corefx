@@ -220,7 +220,9 @@ namespace System.Text.Json
         public JsonException(string? message, string? path, long? lineNumber, long? bytePositionInLine, System.Exception? innerException) { }
         public long? BytePositionInLine { get { throw null; } }
         public long? LineNumber { get { throw null; } }
+#pragma warning disable 8609
         public override string? Message { get { throw null; } }
+#pragma warning restore 8609
         public string? Path { get { throw null; } }
         public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
     }
@@ -687,28 +689,28 @@ namespace System.Text.Json
         public void WriteString(System.ReadOnlySpan<byte> utf8PropertyName, System.Guid value) { }
         public void WriteString(System.ReadOnlySpan<byte> utf8PropertyName, System.ReadOnlySpan<byte> utf8Value) { }
         public void WriteString(System.ReadOnlySpan<byte> utf8PropertyName, System.ReadOnlySpan<char> value) { }
-        public void WriteString(System.ReadOnlySpan<byte> utf8PropertyName, string value) { }
+        public void WriteString(System.ReadOnlySpan<byte> utf8PropertyName, string? value) { }
         public void WriteString(System.ReadOnlySpan<byte> utf8PropertyName, System.Text.Json.JsonEncodedText value) { }
         public void WriteString(System.ReadOnlySpan<char> propertyName, System.DateTime value) { }
         public void WriteString(System.ReadOnlySpan<char> propertyName, System.DateTimeOffset value) { }
         public void WriteString(System.ReadOnlySpan<char> propertyName, System.Guid value) { }
         public void WriteString(System.ReadOnlySpan<char> propertyName, System.ReadOnlySpan<byte> utf8Value) { }
         public void WriteString(System.ReadOnlySpan<char> propertyName, System.ReadOnlySpan<char> value) { }
-        public void WriteString(System.ReadOnlySpan<char> propertyName, string value) { }
+        public void WriteString(System.ReadOnlySpan<char> propertyName, string? value) { }
         public void WriteString(System.ReadOnlySpan<char> propertyName, System.Text.Json.JsonEncodedText value) { }
         public void WriteString(string propertyName, System.DateTime value) { }
         public void WriteString(string propertyName, System.DateTimeOffset value) { }
         public void WriteString(string propertyName, System.Guid value) { }
         public void WriteString(string propertyName, System.ReadOnlySpan<byte> utf8Value) { }
         public void WriteString(string propertyName, System.ReadOnlySpan<char> value) { }
-        public void WriteString(string propertyName, string value) { }
+        public void WriteString(string propertyName, string? value) { }
         public void WriteString(string propertyName, System.Text.Json.JsonEncodedText value) { }
         public void WriteString(System.Text.Json.JsonEncodedText propertyName, System.DateTime value) { }
         public void WriteString(System.Text.Json.JsonEncodedText propertyName, System.DateTimeOffset value) { }
         public void WriteString(System.Text.Json.JsonEncodedText propertyName, System.Guid value) { }
         public void WriteString(System.Text.Json.JsonEncodedText propertyName, System.ReadOnlySpan<byte> utf8Value) { }
         public void WriteString(System.Text.Json.JsonEncodedText propertyName, System.ReadOnlySpan<char> value) { }
-        public void WriteString(System.Text.Json.JsonEncodedText propertyName, string value) { }
+        public void WriteString(System.Text.Json.JsonEncodedText propertyName, string? value) { }
         public void WriteString(System.Text.Json.JsonEncodedText propertyName, System.Text.Json.JsonEncodedText value) { }
         public void WriteStringValue(System.DateTime value) { }
         public void WriteStringValue(System.DateTimeOffset value) { }

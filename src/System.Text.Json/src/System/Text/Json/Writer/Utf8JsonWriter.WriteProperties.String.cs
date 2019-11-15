@@ -420,7 +420,7 @@ namespace System.Text.Json
         /// as if <see cref="WriteNull(System.ReadOnlySpan{byte})"/> were called.
         /// </para>
         /// </remarks>
-        public void WriteString(string propertyName, string value)
+        public void WriteString(string propertyName, string? value)
         {
             if (propertyName == null)
             {
@@ -505,7 +505,7 @@ namespace System.Text.Json
         /// as if <see cref="WriteNull(System.Text.Json.JsonEncodedText)"/> was called.
         /// </para>
         /// </remarks>
-        public void WriteString(JsonEncodedText propertyName, string value)
+        public void WriteString(JsonEncodedText propertyName, string? value)
         {
             if (value == null)
             {
@@ -745,7 +745,7 @@ namespace System.Text.Json
         /// as if <see cref="WriteNull(System.ReadOnlySpan{char})"/> was called.
         /// </para>
         /// </remarks>
-        public void WriteString(ReadOnlySpan<char> propertyName, string value)
+        public void WriteString(ReadOnlySpan<char> propertyName, string? value)
         {
             if (value == null)
             {
@@ -817,7 +817,7 @@ namespace System.Text.Json
         /// as if <see cref="WriteNull(System.ReadOnlySpan{byte})"/> was called.
         /// </para>
         /// </remarks>
-        public void WriteString(ReadOnlySpan<byte> utf8PropertyName, string value)
+        public void WriteString(ReadOnlySpan<byte> utf8PropertyName, string? value)
         {
             if (value == null)
             {
