@@ -190,6 +190,7 @@ namespace System.Xml.Linq.Tests
             Assert.Same(a.Namespace, b.Name.Namespace);
             Assert.Same(a, b.Name);
             Assert.Same(XNamespace.None, a.Namespace);
+            Assert.Same(a.ToString(), b.Name.ToString());
         }
 
         [Fact]
