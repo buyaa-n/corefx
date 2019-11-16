@@ -62,7 +62,7 @@ namespace System.Text.Json
 
         // Create a property that is ignored at run-time. It uses the same type (typeof(sbyte)) to help
         // prevent issues with unsupported types and helps ensure we don't accidently (de)serialize it.
-        public static JsonPropertyInfo CreateIgnoredPropertyPlaceholder(PropertyInfo propertyInfo, JsonSerializerOptions options)
+        public static JsonPropertyInfo CreateIgnoredPropertyPlaceholder(PropertyInfo? propertyInfo, JsonSerializerOptions options)
         {
             JsonPropertyInfo jsonPropertyInfo = new JsonPropertyInfoNotNullable<sbyte, sbyte, sbyte, sbyte>();
             jsonPropertyInfo.Options = options;
@@ -238,7 +238,7 @@ namespace System.Text.Json
         // Use a field here (not a property) to avoid value semantics.
         public JsonEncodedText? EscapedName;
 
-        public static TAttribute? GetAttribute<TAttribute>(PropertyInfo propertyInfo) where TAttribute : Attribute
+        public static TAttribute? GetAttribute<TAttribute>(PropertyInfo? propertyInfo) where TAttribute : Attribute
         {
             return (TAttribute?)propertyInfo?.GetCustomAttribute(typeof(TAttribute), inherit: false);
         }
@@ -514,10 +514,12 @@ namespace System.Text.Json
 
         public void Write(ref WriteStack state, Utf8JsonWriter writer)
         {
-            Debug.Assert(ShouldSerialize && ElementClassInfo != null);
+            Debug.Assert(ShouldSerialize);
 
             if (state.Current.CollectionEnumerator != null)
             {
+                Debug.Assert(ElementClassInfo != null);
+
                 // Forward the setter to the value-based JsonPropertyInfo.
                 JsonPropertyInfo? propertyInfo = ElementClassInfo.PolicyProperty;
                 Debug.Assert(propertyInfo != null);

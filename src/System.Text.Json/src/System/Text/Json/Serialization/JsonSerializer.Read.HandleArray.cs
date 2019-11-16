@@ -312,7 +312,8 @@ namespace System.Text.Json
                     }
                     else
                     {
-                        throw ThrowHelper.GetNotSupportedException_SerializationNotSupportedCollection(currentDictionary?.GetType(), parentType: null, memberInfo: null);
+                        Debug.Assert(currentDictionary != null);
+                        throw ThrowHelper.GetNotSupportedException_SerializationNotSupportedCollection(currentDictionary.GetType(), parentType: null, memberInfo: null);
                     }
                 }
             }
